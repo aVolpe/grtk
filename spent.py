@@ -42,25 +42,22 @@ _failure_message = """
 """
 
 
-
 def _spent_time(issue, date, hours, activity_id, comment):
     te = TimeEntry(issue)
     response = te.add(date, hours, activity_id, comment)
-    if response['code'] == 201 :
+    if response['code'] == 201:
         print _sucess_message.format(
-                str(response['time_entry']['id']),
-                str(response['time_entry']['project']['name']),
-                str(response['time_entry']['issue']['id']),
-                str(response['time_entry']['user']['name']),
-                str(response['time_entry']['activity']['name'])
-            )
+            str(response['time_entry']['id']),
+            str(response['time_entry']['project']['name']),
+            str(response['time_entry']['issue']['id']),
+            str(response['time_entry']['user']['name']),
+            str(response['time_entry']['activity']['name'])
+        )
     else:
         print _failure_message.format(
-                response['code'],
-                response['messages']
-            )
-
-
+            response['code'],
+            response['messages']
+        )
 
 
 def _main():
@@ -70,20 +67,20 @@ def _main():
                         help='Issue identifier, IE: 1234')
     parser.add_argument('-d', '--date', dest='date',
                         default=None,
-    					help='The date the time was spent',
-    					type=str)
+                        help='The date the time was spent',
+                        type=str)
     parser.add_argument('-c', '--comment',
-                        dest='comment', 
+                        dest='comment',
                         default='Develop work',
                         help='A comment IE: Fix picker bug')
-    parser.add_argument('-t', '--time', 
+    parser.add_argument('-t', '--time',
                         type=float, dest="time", required=True,
                         help='Time spent IE: 1; 0.1')
     parser.add_argument('-a', '--activity',
-                        type=float, dest="activity_id", 
+                        type=float, dest="activity_id",
                         default=None,
                         help='Activity id')
-    
+
     args = parser.parse_args()
 
     date = None

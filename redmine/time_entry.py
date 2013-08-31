@@ -20,9 +20,8 @@ import urllib
 import urllib2
 import urlparse
 
-from setting import Setting
+from .setting import Setting
 import datetime
-
 
 
 class TimeEntry(object):
@@ -32,12 +31,9 @@ class TimeEntry(object):
     TIME_ENTRY_GET_ALL_URL = 'time_entries.json'
     TIME_ENTRY_POST_URL = 'time_entries.json'
 
-
     def __init__(self, issue):
-        self.issue= issue
+        self.issue = issue
         self._setting = Setting()
-        
-
 
     def add(self, date, hours, activity_id, comment):
         if not activity_id:
@@ -46,31 +42,30 @@ class TimeEntry(object):
             now = datetime.datetime.now()
             date = now.strftime(self.DATE_FORMAT)
         data = {
-            "time_entry[issue_id]" : self.issue,
-            "time_entry[spent_on]" : date,
-            "time_entry[hours]" : str(hours),
-            "time_entry[activity_id]" : int(activity_id),
-            "time_entry[comments]" : str(comment)
+            "time_entry[issue_id]": self.issue,
+            "time_entry[spent_on]": date,
+            "time_entry[hours]": str(hours),
+            "time_entry[activity_id]": int(activity_id),
+            "time_entry[comments]": str(comment)
         }
 
         try:
             response = json.loads(self._post(data))
             response['code'] = 201
             return response
-        except  urllib2.HTTPError as err:
-            response = {"code" :  err.code}
+        except urllib2.HTTPError as err:
+            response = {"code":  err.code}
             if err.code == 422:
                 response['messages'] = json.loads(err.read())['errors']
             else:
                 response['messages'] = err.read()
             return response
 
-
     def _post(self, data):
         url = self._get_full_post_url()
         headers = {
-            'X-Redmine-API-Key' : self._setting.get_key()
-            }
+            'X-Redmine-API-Key': self._setting.get_key()
+        }
         #headers['Content-Type'] = 'application/json'
         req = urllib2.Request(url, urllib.urlencode(data, False), headers)
 
@@ -80,7 +75,6 @@ class TimeEntry(object):
             raise err
         else:
             return response.read()
-
 
     def _get_full_post_url(self):
         return urlparse.urljoin(self._setting.get_host(),
